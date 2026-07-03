@@ -45,7 +45,7 @@ export default function AdminLogin() {
             <GraduationCap className="w-8 h-8 text-[#8B8680]" />
           </div>
           <h1 className="text-xl font-semibold text-[#2D2D2D]">Admin Portal</h1>
-          <p className="text-sm text-[#6B6560] mt-1">Sign in to manage the Olympiad portal</p>
+          <p className="text-sm text-[#6B6560] mt-1">Sign in to manage the Junior Physics Olympiad</p>
         </div>
 
         <Card className="border-[#E8E4E0] bg-white shadow-sm">

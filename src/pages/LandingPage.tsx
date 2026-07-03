@@ -19,7 +19,7 @@ export default function LandingPage() {
       <header className="h-16 bg-white border-b border-[#E8E4E0] flex items-center px-4 lg:px-8">
         <div className="flex items-center gap-3 max-w-7xl mx-auto w-full">
           <GraduationCap className="w-7 h-7 text-[#8B8680]" />
-          <h1 className="text-lg font-semibold text-[#2D2D2D]">Olympiad Portal</h1>
+          <h1 className="text-lg font-semibold text-[#2D2D2D]">Junior Physics Olympiad</h1>
           <div className="flex-1" />
           <Link
             to="/admin/login"
@@ -158,7 +158,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-[#8B8680]" />
-            <span className="text-sm text-[#6B6560]">Olympiad Portal 2026</span>
+            <span className="text-sm text-[#6B6560]">Junior Physics Olympiad 2026</span>
           </div>
           <p className="text-xs text-[#9B9590]">
             National Olympiad Examination Committee. All rights reserved.
