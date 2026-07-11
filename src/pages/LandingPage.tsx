@@ -43,8 +43,7 @@ export default function LandingPage() {
             <span className="text-[#8B8680]">Registration Portal</span>
           </h2>
           <p className="text-[#6B6560] text-base lg:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Register students for Mathematics, Science, English, and Computer Science Olympiads.
-            Simple bulk upload for schools, easy individual registration for parents.
+            Register students for MPC Olympiads.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -76,7 +75,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-white border-y border-[#E8E4E0]">
         <div className="max-w-6xl mx-auto">
           <h3 className="text-xl font-semibold text-[#2D2D2D] text-center mb-12">
-            Everything You Need for Olympiad Registration
+            Exam Syllabus
           </h3>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
