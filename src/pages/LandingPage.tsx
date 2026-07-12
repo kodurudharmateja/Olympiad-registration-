@@ -83,7 +83,13 @@ export default function LandingPage() {
             <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
               <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
               {/* Public syllabus list — will fetch from the syllabus API */}
-              <SyllabusList />
+              {/* Syllabus card */}
+            <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
+              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
+              <p className="text-xs text-[#6B6560] leading-relaxed">
+                Exam syllabus details coming soon.
+              </p>
+            </div>
             </div>
 
             {/* About card */}
