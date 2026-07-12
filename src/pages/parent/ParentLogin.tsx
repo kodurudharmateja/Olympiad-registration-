@@ -95,7 +95,7 @@ export default function ParentLogin() {
                 Don't have an account?{" "}
                 <Link to="/parent/register" className="text-[#8B8680] hover:text-[#2D2D2D] font-medium">Register</Link>
               </p>
-              <p className="text-xs text-[#9B9590] mt-2">Demo: 9812345678 / parent123</p>
+              <p className="text-xs text-[#9B9590] mt-2">contact admin</p>
             </div>
           </CardContent>
         </Card>

@@ -4,6 +4,7 @@ import AppLayout from "@/components/layouts/AppLayout";
 
 // ─── Landing ───
 import LandingPage from "./pages/LandingPage";
+import SyllabusPage from "./pages/SyllabusPage";
 
 // ─── Admin ───
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -60,6 +61,7 @@ export default function App() {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/syllabus" element={<SyllabusPage />} />
 
       {/* Admin routes */}
       <Route path="/admin/login" element={<AdminLogin />} />

@@ -100,7 +100,7 @@ export default function SchoolLogin() {
                 </Link>
               </p>
               <p className="text-xs text-[#9B9590] mt-2">
-                Demo: 9876543210 / school123
+                contact support
               </p>
             </div>
           </CardContent>

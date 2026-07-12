@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import SyllabusList from "@/components/SyllabusList";
 import { Button } from "@/components/ui/button";
 import {
   GraduationCap,
@@ -87,7 +86,19 @@ export default function LandingPage() {
               {/* Syllabus card */}
             <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
               <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
-              <SyllabusList />
+              {/* Syllabus card */}
+            <Link
+              to="/syllabus"
+              className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0] hover:border-[#C4BFB6] transition-colors"
+            >
+              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-2">Syllabus</h4>
+              <p className="text-xs text-[#6B6560] leading-relaxed">
+                View the full exam-wise syllabus for all Junior Physics Olympiad exams.
+              </p>
+              <span className="inline-block mt-3 text-xs font-medium text-[#8B8680]">
+                View full syllabus →
+              </span>
+            </Link>
             </div>
             </div>
 

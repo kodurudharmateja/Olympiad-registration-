@@ -104,7 +104,7 @@ export default function AdminLogin() {
 
             <div className="mt-4 pt-4 border-t border-[#E8E4E0]">
               <p className="text-xs text-[#9B9590] text-center">
-                Default: admin@olympiad.portal / admin123
+                contact support
               </p>
             </div>
           </CardContent>
