@@ -95,9 +95,9 @@ export default function LandingPage() {
             <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
               <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">About</h4>
               <p className="text-xs text-[#6B6560] leading-relaxed">
-                {/* Your about text goes here */}
-                Junior Physics Olympiad is a national exam program helping students test and
-                sharpen their physics knowledge through structured, exam-wise assessments.
+                prestigious
+                national-level examination designed to identify, encourage, 
+                and nurture young physics enthusiasts from across India.JPO provides students with an opportunity to strengthen their conceptual understanding, logical reasoning, scientific thinking, and problem-solving abilities.
               </p>
             </div>
           </div>
