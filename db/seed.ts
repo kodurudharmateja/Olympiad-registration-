@@ -187,7 +187,7 @@ async function seed() {
 
   console.log("\n🎉 Seed complete!");
   console.log("\nLogin credentials:");
-  console.log("  Admin: admin@olympiad.portal / admin123");
+  console.log("  Admin: admin123admin@olympiad.portal / ");
   console.log("  School 1: 9876543210 / school123");
   console.log("  School 2: 9876543211 / school123");
   console.log("  School 3: 9876543212 / school123");
