@@ -61,7 +61,7 @@ export default function SchoolRegister() {
             Back to Home
           </Link>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <GraduationCap className="w-8 h-8 text-[#8B8680]" />
+            <img src="/logo.png" alt="Junior Physics Olympiad" className="w-8 h-8 object-contain" />
           </div>
           <h1 className="text-xl font-semibold text-[#2D2D2D]">Register Your School</h1>
           <p className="text-sm text-[#6B6560]">Create a school account for bulk registration</p>

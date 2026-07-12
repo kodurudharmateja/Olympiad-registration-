@@ -18,7 +18,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="h-16 bg-white border-b border-[#E8E4E0] flex items-center px-4 lg:px-8">
         <div className="flex items-center gap-3 max-w-7xl mx-auto w-full">
-          <GraduationCap className="w-7 h-7 text-[#8B8680]" />
+          <img src="/logo.png" alt="Junior Physics Olympiad" className="w-7 h-7 object-contain" />
           <h1 className="text-lg font-semibold text-[#2D2D2D]">Junior Physics Olympiad</h1>
           <div className="flex-1" />
           <Link

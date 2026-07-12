@@ -38,7 +38,7 @@ export default function SchoolLogin() {
             Back to Home
           </Link>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <GraduationCap className="w-8 h-8 text-[#8B8680]" />
+            <img src="/logo.png" alt="Junior Physics Olympiad" className="w-8 h-8 object-contain" />
           </div>
           <h1 className="text-xl font-semibold text-[#2D2D2D]">School Portal</h1>
           <p className="text-sm text-[#6B6560] mt-1">Sign in to manage your students</p>

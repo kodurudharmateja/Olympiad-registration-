@@ -35,7 +35,7 @@ export default function ParentRegister() {
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
-          <GraduationCap className="w-8 h-8 text-[#8B8680] mx-auto mb-2" />
+          <img src="/logo.png" alt="Junior Physics Olympiad" className="w-8 h-8 mx-auto mb-2 object-contain" />
           <h1 className="text-xl font-semibold text-[#2D2D2D]">Parent Registration</h1>
           <p className="text-sm text-[#6B6560]">Create an account to register your child</p>
         </div>

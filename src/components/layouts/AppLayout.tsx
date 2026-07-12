@@ -98,7 +98,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         {/* Logo area */}
         <div className="h-16 flex items-center px-6 border-b border-[#E8E4E0]">
-          <GraduationCap className="w-6 h-6 text-[#8B8680] mr-3" />
+          <img src="/logo.png" alt="Junior Physics Olympiad" className="w-6 h-6 mr-3 object-contain" />
           <div>
             <h1 className="text-sm font-semibold text-[#2D2D2D]">Junior Physics Olympiad</h1>
             <p className="text-xs text-[#9B9590]">{portalTitle}</p>
