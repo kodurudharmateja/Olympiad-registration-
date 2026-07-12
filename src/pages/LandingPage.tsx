@@ -80,13 +80,6 @@ export default function LandingPage() {
 
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Syllabus card */}
-            <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
-              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
-              {/* Public syllabus list — will fetch from the syllabus API */}
-              {/* Syllabus card */}
-            <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
-              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
-              {/* Syllabus card */}
             <Link
               to="/syllabus"
               className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0] hover:border-[#C4BFB6] transition-colors"
@@ -99,16 +92,15 @@ export default function LandingPage() {
                 View full syllabus →
               </span>
             </Link>
-            </div>
-            </div>
 
             {/* About card */}
             <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
               <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">About</h4>
               <p className="text-xs text-[#6B6560] leading-relaxed">
-                prestigious
-                national-level examination designed to identify, encourage, 
-                and nurture young physics enthusiasts from across India.JPO provides students with an opportunity to strengthen their conceptual understanding, logical reasoning, scientific thinking, and problem-solving abilities.
+                prestigious national-level examination designed to identify, encourage,
+                and nurture young physics enthusiasts from across India. JPO provides students
+                with an opportunity to strengthen their conceptual understanding, logical
+                reasoning, scientific thinking, and problem-solving abilities.
               </p>
             </div>
           </div>
