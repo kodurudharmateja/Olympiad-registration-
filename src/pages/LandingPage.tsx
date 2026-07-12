@@ -38,12 +38,12 @@ export default function LandingPage() {
             Olympiad Registration 2026 Now Open
           </div>
           <h2 className="text-3xl lg:text-5xl font-bold text-[#2D2D2D] mb-4 tracking-tight">
-            National Olympiad Exam
+            Junior Physics Olympiad
             <br />
             <span className="text-[#8B8680]">Registration Portal</span>
           </h2>
           <p className="text-[#6B6560] text-base lg:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Register students for MPC Olympiads.
+            Inspiring Young Minds to Explore the World of Physics.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -78,50 +78,23 @@ export default function LandingPage() {
             Exam Syllabus
           </h3>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: <School className="w-5 h-5" />,
-                title: "School Bulk Registration",
-                desc: "Upload hundreds of students via CSV/Excel. Single payment for the entire batch.",
-              },
-              {
-                icon: <Users className="w-5 h-5" />,
-                title: "Individual Parent Registration",
-                desc: "Register your child directly, pay per exam, and download receipts instantly.",
-              },
-              {
-                icon: <CreditCard className="w-5 h-5" />,
-                title: "Secure Online Payments",
-                desc: "Integrated Razorpay payments with instant receipt generation.",
-              },
-              {
-                icon: <FileText className="w-5 h-5" />,
-                title: "PDF Receipts & Hall Tickets",
-                desc: "Download professional receipts immediately after payment.",
-              },
-              {
-                icon: <Shield className="w-5 h-5" />,
-                title: "Admin Dashboard",
-                desc: "Complete oversight with reports, analytics, and management tools.",
-              },
-              {
-                icon: <BarChart3 className="w-5 h-5" />,
-                title: "Exam-wise Analytics",
-                desc: "Track registrations, payments, and participation per exam.",
-              },
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0] hover:border-[#C4BFB6] transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg bg-[#F0EDE8] flex items-center justify-center text-[#8B8680] mb-4">
-                  {feature.icon}
-                </div>
-                <h4 className="text-sm font-semibold text-[#2D2D2D] mb-2">{feature.title}</h4>
-                <p className="text-xs text-[#6B6560] leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Syllabus card */}
+            <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
+              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
+              {/* Public syllabus list — will fetch from the syllabus API */}
+              <SyllabusList />
+            </div>
+
+            {/* About card */}
+            <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
+              <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">About</h4>
+              <p className="text-xs text-[#6B6560] leading-relaxed">
+                {/* Your about text goes here */}
+                Junior Physics Olympiad is a national exam program helping students test and
+                sharpen their physics knowledge through structured, exam-wise assessments.
+              </p>
+            </div>
           </div>
         </div>
       </section>
