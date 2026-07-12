@@ -9,6 +9,7 @@ import { registrationRouter } from "./routers/registration-router";
 import { paymentRouter } from "./routers/payment-router";
 import { reportRouter } from "./routers/report-router";
 import { uploadRouter } from "./routers/upload-router";
+import { syllabusRouter } from "./routers/syllabus";
 
 export const appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
@@ -22,6 +23,7 @@ export const appRouter = createRouter({
   payment: paymentRouter,
   report: reportRouter,
   upload: uploadRouter,
+  syllabus: syllabusRouter, 
 });
 
 export type AppRouter = typeof appRouter;

@@ -14,6 +14,7 @@ import AdminStudents from "./pages/admin/AdminStudents";
 import AdminExams from "./pages/admin/AdminExams";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminReports from "./pages/admin/AdminReports";
+import AdminSyllabus from "./pages/admin/AdminSyllabus";
 
 // ─── School ───
 import SchoolLogin from "./pages/school/SchoolLogin";
@@ -69,6 +70,7 @@ export default function App() {
       <Route path="/admin/exams" element={<ProtectedRoute allowedRole="ADMIN"><AdminExams /></ProtectedRoute>} />
       <Route path="/admin/payments" element={<ProtectedRoute allowedRole="ADMIN"><AdminPayments /></ProtectedRoute>} />
       <Route path="/admin/reports" element={<ProtectedRoute allowedRole="ADMIN"><AdminReports /></ProtectedRoute>} />
+      <Route path="/admin/syllabus" element={<ProtectedRoute allowedRole="ADMIN"><AdminSyllabus /></ProtectedRoute>} />
 
       {/* School routes */}
       <Route path="/school/login" element={<SchoolLogin />} />

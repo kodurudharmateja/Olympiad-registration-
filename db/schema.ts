@@ -126,8 +126,25 @@ export const registrations = mysqlTable("registrations", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+
+
 export type Registration = typeof registrations.$inferSelect;
 export type InsertRegistration = typeof registrations.$inferInsert;
+
+// ─── Syllabus ───
+export const syllabus = mysqlTable("syllabus", {
+  id: serial("id").primaryKey(),
+  examName: varchar("examName", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type Syllabus = typeof syllabus.$inferSelect;
+export type InsertSyllabus = typeof syllabus.$inferInsert;
 
 // ─── Payment ───
 export const payments = mysqlTable("payments", {

@@ -18,6 +18,7 @@ import {
   UserCircle,
   BarChart3,
   Award,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +34,7 @@ const adminNav: NavItem[] = [
   { label: "Parents", path: "/admin/parents", icon: <UserCircle className="w-4 h-4" /> },
   { label: "Students", path: "/admin/students", icon: <Users className="w-4 h-4" /> },
   { label: "Exams", path: "/admin/exams", icon: <BookOpen className="w-4 h-4" /> },
+  { label: "Syllabus", path: "/admin/syllabus", icon: <FileText className="w-4 h-4" /> }, 
   { label: "Payments", path: "/admin/payments", icon: <CreditCard className="w-4 h-4" /> },
   { label: "Reports", path: "/admin/reports", icon: <BarChart3 className="w-4 h-4" /> },
 ];

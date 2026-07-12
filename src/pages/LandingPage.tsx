@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import SyllabusList from "@/components/SyllabusList";
 import { Button } from "@/components/ui/button";
 import {
   GraduationCap,
@@ -86,9 +87,7 @@ export default function LandingPage() {
               {/* Syllabus card */}
             <div className="flex-1 p-6 rounded-xl bg-[#FAFAF8] border border-[#E8E4E0]">
               <h4 className="text-sm font-semibold text-[#2D2D2D] mb-4">Syllabus</h4>
-              <p className="text-xs text-[#6B6560] leading-relaxed">
-                Exam syllabus details coming soon.
-              </p>
+              <SyllabusList />
             </div>
             </div>
 
