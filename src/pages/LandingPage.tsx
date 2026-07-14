@@ -189,30 +189,60 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h3 className="text-xl font-semibold text-[#2D2D2D] text-center mb-12">
-            How It Works
-          </h3>
+<section className="py-16 px-4">
+  <div className="max-w-5xl mx-auto">
+    <h3 className="text-xl font-semibold text-[#2D2D2D] text-center mb-12">
+      How It Works
+    </h3>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { step: "01", title: "Register Account", desc: "School or Parent signup with mobile verification" },
-              { step: "02", title: "Select Exam", desc: "Browse live olympiad exams and check eligibility" },
-              { step: "03", title: "Add Students", desc: "Bulk CSV upload or individual student entry" },
-              { step: "04", title: "Pay & Confirm", desc: "Secure Razorpay payment with instant receipt" },
-            ].map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-[#2D2D2D] text-white flex items-center justify-center text-sm font-bold mx-auto mb-4">
-                  {s.step}
-                </div>
-                <h4 className="text-sm font-semibold text-[#2D2D2D] mb-2">{s.title}</h4>
-                <p className="text-xs text-[#6B6560]">{s.desc}</p>
-              </div>
-            ))}
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[
+        {
+          step: "01",
+          title: "How It Works",
+          desc: "Learn the complete registration process step by step.",
+          to: "/HowItWorks",
+        },
+        {
+          step: "02",
+          title: "Why-Participate",
+          desc: "Discover why students should take part in the Olympiad.",
+          to: "/WhyParticipate",
+        },
+        {
+          step: "03",
+          title: "Register",
+          desc: "Start registering your school and students online.",
+          to: "/Register",
+        },
+        {
+          step: "04",
+          title: "Contact Us",
+          desc: "Need assistance? Reach out to the JPO support team.",
+          to: "/ContactUs",
+        },
+      ].map((item) => (
+        <Link
+          key={item.step}
+          to={item.to}
+          className="group rounded-xl p-4 transition-all duration-300 hover:bg-white hover:shadow-lg"
+        >
+          <div className="w-14 h-14 rounded-full bg-[#2D2D2D] text-white flex items-center justify-center text-sm font-bold mx-auto mb-4 transition-all duration-300 group-hover:bg-[#1E3A8A] group-hover:scale-110">
+            {item.step}
           </div>
-        </div>
-      </section>
+
+          <h4 className="text-sm font-semibold text-[#2D2D2D] mb-2 text-center group-hover:text-[#1E3A8A] transition-colors">
+            {item.title}
+          </h4>
+
+          <p className="text-xs text-[#6B6560] text-center leading-relaxed">
+            {item.desc}
+          </p>
+        </Link>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-[#E8E4E0] bg-white">

@@ -6,6 +6,14 @@ import AppLayout from "@/components/layouts/AppLayout";
 import LandingPage from "./pages/LandingPage";
 import RegisterInfo from "./pages/RegisterInfo";
 import SyllabusPage from "./pages/SyllabusPage";
+import HowItWorks from "./pages/HowItWorks";
+import ContactUs from "./pages/ContactUs";
+import Register from "./pages/Register";
+import WhyParticipate from "./pages/WhyParticipate";
+
+
+
+
 
 // ─── Admin ───
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -38,6 +46,8 @@ import ParentPayments from "./pages/parent/ParentPayments";
 import ParentProfile from "./pages/parent/ParentProfile";
 
 import NotFound from "./pages/NotFound";
+import ContactUsPage from "./pages/ContactUs";
+import HowItWorksPage from "./pages/HowItWorks";
 
 function ProtectedRoute({ children, allowedRole }: { children: React.ReactNode; allowedRole: string }) {
   const { user, role, isLoading } = useAuth();
@@ -64,6 +74,11 @@ export default function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/register-now" element={<RegisterInfo />} />
       <Route path="/syllabus" element={<SyllabusPage />} />
+      <Route path="/HowItWorks" element={<HowItWorksPage />} />
+      <Route path="/ContactUs" element={<ContactUsPage />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/whyparticipate" element={<WhyParticipate />} />
+
 
       {/* Admin routes */}
       <Route path="/admin/login" element={<AdminLogin />} />

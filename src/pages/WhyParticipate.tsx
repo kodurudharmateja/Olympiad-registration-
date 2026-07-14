@@ -81,8 +81,8 @@ export default function WhyParticipatePage() {
         </div>
 
         <div className="mt-10">
-          <h2 className="text-base font-bold text-[#1E3A8A]">AWARDS & RECOGNITION</h2>
-          <div className="mt-4 grid grid-cols-3 max-w-md gap-4">
+          <h2 className="text-center text-xl font-bold text-[#1E3A8A]">AWARDS & RECOGNITION</h2>
+          <div className="mt-4 mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl">
             {awards.map((a) => (
               <div key={a.label} className="flex flex-col items-center text-center gap-2">
                 <Medal className="h-10 w-10" style={{ color: a.color }} strokeWidth={1.5} />
