@@ -64,7 +64,7 @@ export default function LandingPage() {
                 className="border-[#C4BFB6] text-[#2D2D2D] hover:bg-[#F0EDE8] px-8 h-12"
               >
                 <Users className="w-4 h-4 mr-2" />
-                Register Now
+                Student login
               </Button>
             </Link>
           </div>
