@@ -72,7 +72,7 @@ export default function HowItWorksPage() {
 
         <div className="mt-12 text-center">
           <Link
-            to="/register"
+            to="/RegisterInfo"
             className="inline-flex items-center gap-2 rounded-md bg-[#1E3A8A] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#16296b]"
           >
             Start Registration

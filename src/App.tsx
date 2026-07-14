@@ -8,7 +8,7 @@ import RegisterInfo from "./pages/RegisterInfo";
 import SyllabusPage from "./pages/SyllabusPage";
 import HowItWorks from "./pages/HowItWorks";
 import ContactUs from "./pages/ContactUs";
-import Register from "./pages/Register";
+import Register from "./pages/RegisterInfo";
 import WhyParticipate from "./pages/WhyParticipate";
 
 
@@ -76,7 +76,7 @@ export default function App() {
       <Route path="/syllabus" element={<SyllabusPage />} />
       <Route path="/HowItWorks" element={<HowItWorksPage />} />
       <Route path="/ContactUs" element={<ContactUsPage />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/RegisterInfo" element={<RegisterInfo />} />
       <Route path="/whyparticipate" element={<WhyParticipate />} />
 
 

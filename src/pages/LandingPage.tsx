@@ -213,7 +213,7 @@ export default function LandingPage() {
           step: "03",
           title: "Register",
           desc: "Start registering your school and students online.",
-          to: "/Register",
+          to: "/RegisterInfo",
         },
         {
           step: "04",

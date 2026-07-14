@@ -95,7 +95,7 @@ export default function WhyParticipatePage() {
 
         <div className="mt-12 text-center">
           <Link
-            to="/register"
+            to="/RegisterInfo"
             className="inline-flex items-center gap-2 rounded-md bg-[#F5A623] px-6 py-3 text-sm font-semibold text-[#0F2557] transition hover:bg-[#e0951a]"
           >
             Register Now
