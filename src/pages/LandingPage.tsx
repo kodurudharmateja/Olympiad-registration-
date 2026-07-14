@@ -120,6 +120,11 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="py-16 lg:py-24 px-4">
         <div className="max-w-5xl mx-auto text-center">
+          <img
+            src="/logo.png"
+            alt="Junior Physics Olympiad"
+            className="w-28 h-28 lg:w-36 lg:h-36 object-contain mx-auto mb-6"
+          />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F0EDE8] text-[#6B6560] text-xs font-medium mb-6">
             <Award className="w-3.5 h-3.5" />
             Olympiad Registration 2026 Now Open
