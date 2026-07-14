@@ -3,8 +3,6 @@ import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   GraduationCap,
-  School,
-  Users,
   ArrowRight,
   Award,
   Menu,
@@ -42,7 +40,7 @@ export default function LandingPage() {
                 {link.label}
               </a>
             ))}
-            <Link to="/school/login">
+            <Link to="/register-now">
               <Button
                 size="sm"
                 className="bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white"
@@ -102,7 +100,7 @@ export default function LandingPage() {
                   {link.label}
                 </a>
               ))}
-              <Link to="/school/login" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/register-now" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white mt-2">
                   Register Now
                 </Button>
@@ -135,25 +133,14 @@ export default function LandingPage() {
             Inspiring Young Minds to Explore the World of Physics.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/school/login">
+          <div className="flex justify-center">
+            <Link to="/register-now">
               <Button
                 size="lg"
-                className="bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white px-8 h-12"
+                className="bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white px-10 h-12"
               >
-                <School className="w-4 h-4 mr-2" />
-                School Login
+                Register Now
                 <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-            <Link to="/parent/login">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-[#C4BFB6] text-[#2D2D2D] hover:bg-[#F0EDE8] px-8 h-12"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Student login
               </Button>
             </Link>
           </div>
