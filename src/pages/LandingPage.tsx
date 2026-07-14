@@ -1,34 +1,123 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   GraduationCap,
   School,
   Users,
-  Shield,
   ArrowRight,
-  CreditCard,
-  FileText,
   Award,
-  BarChart3,
+  Menu,
+  X,
 } from "lucide-react";
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { label: "About", to: "#about" },
+    { label: "Syllabus", to: "/syllabus" },
+    { label: "Achievements", to: "/achievements" },
+    { label: "Brochure", to: "/brochure.pdf", newTab: true },
+  ];
+
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
       {/* Header */}
-      <header className="h-16 bg-white border-b border-[#E8E4E0] flex items-center px-4 lg:px-8">
+      <header className="h-16 bg-white border-b border-[#E8E4E0] flex items-center px-4 lg:px-8 relative z-50">
         <div className="flex items-center gap-3 max-w-7xl mx-auto w-full">
           <img src="/logo.png" alt="Junior Physics Olympiad" className="w-7 h-7 object-contain" />
           <h1 className="text-lg font-semibold text-[#2D2D2D]">Junior Physics Olympiad</h1>
           <div className="flex-1" />
-          <Link
-            to="/admin/login"
-            className="text-sm text-[#6B6560] hover:text-[#2D2D2D] transition-colors mr-4"
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.to}
+                {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="text-sm text-[#6B6560] hover:text-[#2D2D2D] transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link to="/school/login">
+              <Button
+                size="sm"
+                className="bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white"
+              >
+                Register Now
+              </Button>
+            </Link>
+            <Link
+              to="/admin/login"
+              className="text-sm text-[#6B6560] hover:text-[#2D2D2D] transition-colors"
+            >
+              Admin
+            </Link>
+          </nav>
+
+          {/* Mobile hamburger - right side */}
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-2 -mr-2 text-[#2D2D2D]"
+            aria-label="Open menu"
           >
-            Admin
-          </Link>
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
       </header>
+
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          {/* Drawer - slides in from the right */}
+          <div className="absolute top-0 right-0 h-full w-72 bg-white shadow-xl flex flex-col px-6 py-5">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-sm font-semibold text-[#2D2D2D]">Menu</span>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 -mr-2 text-[#2D2D2D]"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col gap-5">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.to}
+                  {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base text-[#2D2D2D] font-medium"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <Link to="/school/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white mt-2">
+                  Register Now
+                </Button>
+              </Link>
+              <Link
+                to="/admin/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base text-[#6B6560] mt-2"
+              >
+                Admin
+              </Link>
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <section className="py-16 lg:py-24 px-4">
@@ -72,7 +161,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="py-16 px-4 bg-white border-y border-[#E8E4E0]">
+      <section id="about" className="py-16 px-4 bg-white border-y border-[#E8E4E0] scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           <h3 className="text-xl font-semibold text-[#2D2D2D] text-center mb-12">
             Exam Syllabus
