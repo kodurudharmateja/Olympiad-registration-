@@ -2,18 +2,26 @@ import "dotenv/config";
 
 function required(name: string): string {
   const value = process.env[name];
-  if (!value && process.env.NODE_ENV === "production") {
+  if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  return value ?? "";
+  return value;
+}
+
+function optional(name: string): string | undefined {
+  return process.env[name];
 }
 
 export const env = {
-  appId: required("APP_ID"),
-  appSecret: required("APP_SECRET"),
-  isProduction: process.env.NODE_ENV === "production",
-  databaseUrl: required("DATABASE_URL"),
-  kimiAuthUrl: required("KIMI_AUTH_URL"),
-  kimiOpenUrl: required("KIMI_OPEN_URL"),
-  ownerUnionId: process.env.OWNER_UNION_ID ?? "",
+  isProduction: process.env.NODE_ENV === "production" || process.env.IS_PROD === "true",
+
+  // Firebase Admin SDK
+  firebaseProjectId: required("FIREBASE_PROJECT_ID"),
+  firebaseClientEmail: required("FIREBASE_CLIENT_EMAIL"),
+  firebasePrivateKey: required("FIREBASE_PRIVATE_KEY"),
+
+  // Optional: Make one user the owner/admin automatically
+  ownerFirebaseUid: optional("OWNER_FIREBASE_UID"),
+
+  // Add any other existing env variables here...
 };

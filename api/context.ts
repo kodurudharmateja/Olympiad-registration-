@@ -1,7 +1,7 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import type { User } from "@db/schema";
 import type { CustomSession } from "./custom-auth";
-import { authenticateRequest } from "./kimi/auth";
+import { authenticateRequest } from "./firebase/auth";   // ← Updated import
 import { authenticateCustomRequest } from "./custom-auth";
 
 export type TrpcContext = {
@@ -14,16 +14,19 @@ export type TrpcContext = {
 export async function createContext(
   opts: FetchCreateContextFnOptions,
 ): Promise<TrpcContext> {
-  const ctx: TrpcContext = { req: opts.req, resHeaders: opts.resHeaders };
+  const ctx: TrpcContext = { 
+    req: opts.req, 
+    resHeaders: opts.resHeaders 
+  };
 
-  // Try Kimi OAuth first
+  // Firebase Auth (main auth now)
   try {
     ctx.user = await authenticateRequest(opts.req.headers);
   } catch {
-    // OAuth auth is optional
+    // Firebase auth is optional (falls back to custom)
   }
 
-  // Try custom auth (admin/school/parent)
+  // Keep your custom auth (admin/school/parent)
   try {
     ctx.customSession = await authenticateCustomRequest(opts.req.headers);
   } catch {
