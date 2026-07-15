@@ -6,10 +6,7 @@ import AppLayout from "@/components/layouts/AppLayout";
 import LandingPage from "./pages/LandingPage";
 import RegisterInfo from "./pages/RegisterInfo";
 import SyllabusPage from "./pages/SyllabusPage";
-import HowItWorks from "./pages/HowItWorks";
-import ContactUs from "./pages/ContactUs";
-import Register from "./pages/RegisterInfo";
-import WhyParticipate from "./pages/WhyParticipate";
+
 
 
 
@@ -48,6 +45,7 @@ import ParentProfile from "./pages/parent/ParentProfile";
 import NotFound from "./pages/NotFound";
 import ContactUsPage from "./pages/ContactUs";
 import HowItWorksPage from "./pages/HowItWorks";
+import WhyParticipate from "./pages/WhyParticipate";
 
 function ProtectedRoute({ children, allowedRole }: { children: React.ReactNode; allowedRole: string }) {
   const { user, role, isLoading } = useAuth();
