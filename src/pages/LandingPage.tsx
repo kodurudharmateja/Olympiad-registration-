@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   GraduationCap,
   ArrowRight,
-  Award,
+  // Award,
   Menu,
   X,
 } from "lucide-react";
@@ -125,10 +125,10 @@ export default function LandingPage() {
             alt="Junior Physics Olympiad"
             className="w-28 h-28 lg:w-36 lg:h-36 object-contain mx-auto mb-6"
           />
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F0EDE8] text-[#6B6560] text-xs font-medium mb-6">
+          {/* <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F0EDE8] text-[#6B6560] text-xs font-medium mb-6">
             <Award className="w-3.5 h-3.5" />
             Olympiad Registration 2026 Now Open
-          </div>
+          </div> */}
           <h2 className="text-3xl lg:text-5xl font-bold text-[#2D2D2D] mb-4 tracking-tight">
             Junior Physics Olympiad
             <br />

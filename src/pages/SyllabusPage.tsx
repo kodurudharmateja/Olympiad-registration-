@@ -46,7 +46,7 @@ export default function SyllabusPage() {
                 <span className="text-sm font-semibold text-[#2D2D2D]">
                   {item.label}
                 </span>
-                <span className="text-xs text-[#8B8680]">Download PDF</span>
+                <span className="text-xs text-[#8B8680]">View PDF</span>
               </a>
             ))}
           </div>
