@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, ArrowLeft, School, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, School, Eye, EyeOff } from "lucide-react";
 
 export default function SchoolRegister() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function SchoolRegister() {
     onError: (err) => setError(err.message),
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -46,8 +46,18 @@ export default function SchoolRegister() {
       return;
     }
 
-    const { confirmPassword, ...data } = form;
-    registerMutation.mutate(data);
+    try {
+      const { createUserWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      const synthesizedEmail = `${form.mobile}@school.olympiad.local`;
+      const userCred = await createUserWithEmailAndPassword(auth, synthesizedEmail, form.password);
+      const idToken = await userCred.user.getIdToken();
+      
+      const { confirmPassword, password, ...data } = form;
+      registerMutation.mutate({ ...data, idToken });
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
+    }
   };
 
   const update = (field: string, value: string) => setForm({ ...form, [field]: value });

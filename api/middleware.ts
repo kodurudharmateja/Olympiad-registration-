@@ -26,14 +26,14 @@ const requireAuth = t.middleware(async (opts) => {
 
 export const authedQuery = t.procedure.use(requireAuth);
 
-// ─── Admin Middleware (Kimi admin OR custom admin) ───
+// ─── Admin Middleware ───
 const requireAdmin = t.middleware(async (opts) => {
   const { ctx, next } = opts;
 
-  const isKimiAdmin = ctx.user?.role === "admin";
+  const isAppAdmin = ctx.user?.role === "admin";
   const isCustomAdmin = ctx.customSession?.type === "ADMIN";
 
-  if (!isKimiAdmin && !isCustomAdmin) {
+  if (!isAppAdmin && !isCustomAdmin) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: ErrorMessages.insufficientRole,

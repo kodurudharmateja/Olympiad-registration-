@@ -10,7 +10,7 @@ import {
   bigint,
 } from "drizzle-orm/mysql-core";
 
-// ─── Users (existing Kimi OAuth) ───
+// ─── Users (Firebase Auth) ───
 export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
   firebaseUid: varchar("firebase_uid", { length: 255 }).notNull().unique(),

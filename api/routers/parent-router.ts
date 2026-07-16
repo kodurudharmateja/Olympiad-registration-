@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { hashSync, compareSync } from "bcrypt-ts";
+
 import { createRouter, publicQuery, adminQuery, parentQuery } from "../middleware";
 import {
   findParentById,
@@ -20,16 +20,22 @@ export const parentRouter = createRouter({
         name: z.string().min(2),
         mobile: z.string().min(10).max(15),
         email: z.string().email().optional(),
-        password: z.string().min(6),
+        idToken: z.string().min(1),
       })
     )
     .mutation(async ({ input }) => {
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
+      }
+
       const existing = await findParentByMobile(input.mobile);
       if (existing) {
         throw new TRPCError({ code: "CONFLICT", message: "Mobile number already registered" });
       }
 
-      const passwordHash = hashSync(input.password, 10);
+      const passwordHash = ""; // Firebase handles passwords
       const result = await createParent({
         name: input.name,
         mobile: input.mobile,
@@ -43,18 +49,19 @@ export const parentRouter = createRouter({
   login: publicQuery
     .input(
       z.object({
+        idToken: z.string().min(1),
         mobile: z.string().min(10),
-        password: z.string().min(1),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const parent = await findParentByMobile(input.mobile);
-      if (!parent) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
       }
 
-      const valid = compareSync(input.password, parent.passwordHash ?? "");
-      if (!valid) {
+      const parent = await findParentByMobile(input.mobile);
+      if (!parent) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
       }
 

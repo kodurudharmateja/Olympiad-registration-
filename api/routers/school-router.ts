@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { hashSync, compareSync } from "bcrypt-ts";
+
 import { createRouter, publicQuery, adminQuery, schoolQuery } from "../middleware";
 import {
   findSchoolById,
@@ -28,16 +28,23 @@ export const schoolRouter = createRouter({
         district: z.string().min(2),
         state: z.string().min(2),
         pinCode: z.string().min(4).max(10),
-        password: z.string().min(6),
+        idToken: z.string().min(1),
       })
     )
     .mutation(async ({ input }) => {
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
+      }
+
       const existing = await findSchoolByMobile(input.mobile);
       if (existing) {
         throw new TRPCError({ code: "CONFLICT", message: "Mobile number already registered" });
       }
 
-      const passwordHash = hashSync(input.password, 10);
+      // We no longer need passwordHash because Firebase handles passwords
+      const passwordHash = ""; 
       const result = await createSchool({
         ...input,
         email: input.email ?? null,
@@ -50,22 +57,23 @@ export const schoolRouter = createRouter({
   login: publicQuery
     .input(
       z.object({
+        idToken: z.string().min(1),
         mobile: z.string().min(10),
-        password: z.string().min(1),
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
+      }
+
       const school = await findSchoolByMobile(input.mobile);
       if (!school) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
       }
       if (!school.isActive) {
         throw new TRPCError({ code: "FORBIDDEN", message: "Account is deactivated" });
-      }
-
-      const valid = compareSync(input.password, school.passwordHash ?? "");
-      if (!valid) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
       }
 
       const token = await createCustomSession(school.id, "SCHOOL");

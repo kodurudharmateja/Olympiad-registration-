@@ -15,6 +15,9 @@ function optional(name: string): string | undefined {
 export const env = {
   isProduction: process.env.NODE_ENV === "production" || process.env.IS_PROD === "true",
 
+  appSecret: required("APP_SECRET"),
+  databaseUrl: required("DATABASE_URL"),
+
   // Firebase Admin SDK
   firebaseProjectId: required("FIREBASE_PROJECT_ID"),
   firebaseClientEmail: required("FIREBASE_CLIENT_EMAIL"),

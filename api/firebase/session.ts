@@ -27,12 +27,12 @@ export async function verifySessionToken(
     const { payload } = await jose.jwtVerify(token, secret, {
       algorithms: [JWT_ALG],
     });
-    const { unionId, clientId } = payload;
-    if (!unionId || !clientId) {
-      console.warn("[session] JWT payload missing required fields.");
+    const { uid, email } = payload;
+    if (!uid) {
+      console.warn("[session] JWT payload missing required uid field.");
       return null;
     }
-    return { unionId, clientId } as SessionPayload;
+    return { uid, email: email as string | undefined } as SessionPayload;
   } catch (error) {
     console.warn("[session] JWT verification failed:", error);
     return null;

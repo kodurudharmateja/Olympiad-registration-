@@ -1,6 +1,8 @@
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
-import admin from 'firebase-admin';
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import type { DecodedIdToken } from 'firebase-admin/auth';
 import { env } from "../lib/env";
 import { getSessionCookieOptions } from "../lib/cookies";
 import { Session } from "@contracts/constants";
@@ -9,9 +11,9 @@ import { signSessionToken } from "./session";           // Keep your existing se
 import { findUserByFirebaseUid, upsertUser } from "../queries/users";
 
 // Initialize Firebase Admin (once)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
       projectId: env.firebaseProjectId,
       clientEmail: env.firebaseClientEmail,
       privateKey: env.firebasePrivateKey?.replace(/\\n/g, '\n'),
@@ -22,7 +24,7 @@ if (!admin.apps.length) {
 // Verify Firebase ID Token
 export async function verifyFirebaseToken(idToken: string) {
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await getAuth().verifyIdToken(idToken);
     return decodedToken;
   } catch (error) {
     console.error("Firebase token verification failed:", error);
@@ -53,7 +55,7 @@ export async function authenticateRequest(headers: Headers) {
 }
 
 // Create session cookie after login (optional but recommended)
-export async function createSessionCookie(c: Context, decodedToken: admin.auth.DecodedIdToken) {
+export async function createSessionCookie(c: Context, decodedToken: DecodedIdToken) {
   const token = await signSessionToken({
     uid: decodedToken.uid,           // Changed from unionId
     email: decodedToken.email,

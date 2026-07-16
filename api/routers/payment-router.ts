@@ -1,288 +1,166 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { sql } from "drizzle-orm";
-import { createRouter, publicQuery, adminQuery, schoolQuery, parentQuery } from "../middleware";
+
+import { createRouter, publicQuery, adminQuery, parentQuery } from "../middleware";
 import {
-  findPaymentById,
-  findPaymentByRazorpayOrderId,
-  listPayments,
-  createPayment,
-  updatePayment,
-  getPaymentCount,
-  getTotalRevenue,
-} from "../queries/payments";
-import { findExamById } from "../queries/exams";
-import { getStudentsByIds } from "../queries/students";
-import { createRegistration, updateRegistrationsByPaymentId } from "../queries/registrations";
-import { getDb } from "../queries/connection";
-import * as schema from "@db/schema";
+  findParentById,
+  findParentByMobile,
+  listParents,
+  createParent,
+  updateParent,
+  getParentCount,
+} from "../queries/parents";
+import { createCustomSession, getCustomCookieName } from "../custom-auth";
+import * as cookie from "cookie";
 
-// ─── Razorpay Simulation (development mode) ───
-// In production, replace with actual Razorpay SDK calls
-let orderCounter = 1000;
-function generateOrderId() {
-  orderCounter++;
-  return `order_${Date.now()}_${orderCounter}`;
-}
-
-function generateReceiptNumber() {
-  return `RCP-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-}
-
-function generatePaymentId() {
-  return `pay_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-}
-
-export const paymentRouter = createRouter({
-  // ─── Create Order (initiates payment) ───
-  createOrder: publicQuery
+export const parentRouter = createRouter({
+  register: publicQuery
     .input(
       z.object({
-        examId: z.number(),
-        payerType: z.enum(["SCHOOL", "PARENT"]),
-        studentIds: z.array(z.number()).min(1),
-        schoolId: z.number().optional(),
-        parentId: z.number().optional(),
+        name: z.string().min(2),
+        mobile: z.string().min(10).max(15),
+        email: z.string().email().optional(),
+        idToken: z.string().min(1),
       })
     )
     .mutation(async ({ input }) => {
-      const exam = await findExamById(input.examId);
-      if (!exam) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Exam not found" });
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
       }
 
-      // Validate students
-      const students = await getStudentsByIds(input.studentIds);
-      if (students.length !== input.studentIds.length) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Some students not found" });
+      const existing = await findParentByMobile(input.mobile);
+      if (existing) {
+        throw new TRPCError({ code: "CONFLICT", message: "Mobile number already registered" });
       }
 
-      // Server-side amount calculation (never trust client)
-      const feePerStudent = parseFloat(exam.feePerStudent.toString());
-      const totalAmount = (feePerStudent * input.studentIds.length * 100).toFixed(0); // in paise
+      const passwordHash = ""; // Firebase handles passwords
+      const result = await createParent({
+        name: input.name,
+        mobile: input.mobile,
+        email: input.email ?? null,
+        passwordHash,
+      });
 
-      // Create Razorpay order (simulated)
-      const razorpayOrderId = generateOrderId();
+      return { success: true, parentId: Number(result[0].insertId) };
+    }),
 
-      // Create payment record
-      const paymentData: schema.InsertPayment = {
-        razorpayOrderId,
-        amount: (feePerStudent * input.studentIds.length).toFixed(2),
-        payerType: input.payerType,
-        schoolId: input.payerType === "SCHOOL" ? input.schoolId ?? null : null,
-        parentId: input.payerType === "PARENT" ? input.parentId ?? null : null,
-        status: "CREATED",
-      };
-
-      const result = await createPayment(paymentData);
-      const paymentId = Number(result[0].insertId);
-
-      // Create pending registrations for each student
-      for (const studentId of input.studentIds) {
-        await createRegistration({
-          studentId,
-          examId: input.examId,
-          schoolId: input.payerType === "SCHOOL" ? input.schoolId ?? null : null,
-          parentId: input.payerType === "PARENT" ? input.parentId ?? null : null,
-          paymentId,
-          status: "PENDING",
-        });
+  login: publicQuery
+    .input(
+      z.object({
+        idToken: z.string().min(1),
+        mobile: z.string().min(10),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
       }
+
+      const parent = await findParentByMobile(input.mobile);
+      if (!parent) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
+      }
+
+      const token = await createCustomSession(parent.id, "PARENT");
+
+      ctx.resHeaders.append(
+        "set-cookie",
+        cookie.serialize(getCustomCookieName(), token, {
+          httpOnly: true,
+          path: "/",
+          sameSite: "lax",
+          maxAge: 30 * 24 * 60 * 60,
+        })
+      );
 
       return {
         success: true,
-        orderId: razorpayOrderId,
-        paymentId,
-        amount: parseInt(totalAmount), // in paise for Razorpay
-        currency: "INR",
-        examName: exam.name,
-        studentCount: input.studentIds.length,
-        feePerStudent,
+        parent: {
+          id: parent.id,
+          name: parent.name,
+          mobile: parent.mobile,
+          email: parent.email,
+        },
       };
     }),
 
-  // ─── Verify Payment (after Razorpay checkout) ───
-  verify: publicQuery
-    .input(
-      z.object({
-        razorpayPaymentId: z.string(),
-        razorpayOrderId: z.string(),
-        razorpaySignature: z.string(),
-        paymentId: z.number(),
+  me: publicQuery.query(async ({ ctx }) => {
+    if (!ctx.customSession || ctx.customSession.type !== "PARENT") {
+      return null;
+    }
+    const parent = await findParentById(ctx.customSession.id);
+    if (!parent) return null;
+    return {
+      id: parent.id,
+      name: parent.name,
+      mobile: parent.mobile,
+      email: parent.email,
+    };
+  }),
+
+  logout: publicQuery.mutation(async ({ ctx }) => {
+    ctx.resHeaders.append(
+      "set-cookie",
+      cookie.serialize(getCustomCookieName(), "", {
+        httpOnly: true,
+        path: "/",
+        sameSite: "lax",
+        maxAge: 0,
       })
-    )
-    .mutation(async ({ input }) => {
-      // In production, verify HMAC signature here
-      // For development, we simulate success
+    );
+    return { success: true };
+  }),
 
-      const payment = await findPaymentById(input.paymentId);
-      if (!payment) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
-      }
-
-      if (payment.status === "PAID") {
-        return { success: true, alreadyProcessed: true };
-      }
-
-      // Update payment status
-      const receiptNumber = generateReceiptNumber();
-      await updatePayment(payment.id, {
-        status: "PAID",
-        razorpayPaymentId: input.razorpayPaymentId,
-        receiptNumber,
-      });
-
-      // Update all linked registrations
-      await updateRegistrationsByPaymentId(payment.id, { status: "PAID" });
-
-      return {
-        success: true,
-        receiptNumber,
-        amount: payment.amount,
-      };
-    }),
-
-  // ─── Webhook handler (idempotent) ───
-  webhook: publicQuery
-    .input(
-      z.object({
-        event: z.string(),
-        payload: z.record(z.string(), z.unknown()),
-      })
-    )
-    .mutation(async ({ input }) => {
-      // In production, verify webhook signature here
-      const orderId = input.payload.order_id as string | undefined;
-      if (!orderId) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Order ID missing" });
-      }
-
-      const payment = await findPaymentByRazorpayOrderId(orderId);
-      if (!payment) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
-      }
-
-      if (payment.status === "PAID") {
-        return { success: true, alreadyProcessed: true };
-      }
-
-      if (input.event === "payment.captured" || input.event === "order.paid") {
-        const receiptNumber = generateReceiptNumber();
-        await updatePayment(payment.id, {
-          status: "PAID",
-          razorpayPaymentId: (input.payload.payment_id as string) ?? generatePaymentId(),
-          receiptNumber,
-        });
-        await updateRegistrationsByPaymentId(payment.id, { status: "PAID" });
-      } else if (input.event === "payment.failed") {
-        await updatePayment(payment.id, { status: "FAILED" });
-        await updateRegistrationsByPaymentId(payment.id, { status: "FAILED" });
-      }
-
-      return { success: true };
-    }),
-
-  // ─── Simulate Payment (for demo/testing) ───
-  simulate: publicQuery
-    .input(z.object({ paymentId: z.number() }))
-    .mutation(async ({ input }) => {
-      const payment = await findPaymentById(input.paymentId);
-      if (!payment) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
-      }
-
-      if (payment.status === "PAID") {
-        return { success: true, alreadyProcessed: true, receiptNumber: payment.receiptNumber };
-      }
-
-      const receiptNumber = generateReceiptNumber();
-      const razorpayPaymentId = generatePaymentId();
-
-      await updatePayment(payment.id, {
-        status: "PAID",
-        razorpayPaymentId,
-        receiptNumber,
-      });
-
-      await updateRegistrationsByPaymentId(payment.id, { status: "PAID" });
-
-      return { success: true, receiptNumber, razorpayPaymentId };
-    }),
-
-  // ─── List payments ───
-  list: adminQuery
-    .input(
-      z.object({
-        status: z.string().optional(),
-        payerType: z.string().optional(),
-        schoolId: z.number().optional(),
-        parentId: z.number().optional(),
-      }).optional()
-    )
-    .query(async ({ input }) => {
-      return listPayments(input ?? {});
-    }),
+  list: adminQuery.query(async () => {
+    return listParents();
+  }),
 
   getById: adminQuery
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const payment = await findPaymentById(input.id);
-      if (!payment) throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
-      return payment;
+      const parent = await findParentById(input.id);
+      if (!parent) throw new TRPCError({ code: "NOT_FOUND", message: "Parent not found" });
+      return parent;
+    }),
+
+  update: adminQuery
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        mobile: z.string().optional(),
+        email: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await updateParent(id, data);
+      return { success: true };
     }),
 
   count: adminQuery.query(async () => {
-    return {
-      total: await getPaymentCount(),
-      totalRevenue: await getTotalRevenue(),
-    };
+    return getParentCount();
   }),
 
-  // ─── School endpoints ───
-  listBySchool: schoolQuery.query(async ({ ctx }) => {
-    return listPayments({ schoolId: ctx.customSession!.id });
+  profile: parentQuery.query(async ({ ctx }) => {
+    const parent = await findParentById(ctx.customSession!.id);
+    if (!parent) throw new TRPCError({ code: "NOT_FOUND", message: "Parent not found" });
+    return parent;
   }),
 
-  // ─── Parent endpoints ───
-  listByParent: parentQuery.query(async ({ ctx }) => {
-    return listPayments({ parentId: ctx.customSession!.id });
-  }),
-
-  // ─── Receipt data ───
-  getReceipt: publicQuery
-    .input(z.object({ paymentId: z.number() }))
-    .query(async ({ input }) => {
-      const db = getDb();
-      const payment = await findPaymentById(input.paymentId);
-      if (!payment) throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
-
-      const regs = await db
-        .select({
-          registrationId: schema.registrations.id,
-          studentName: schema.students.name,
-          studentClass: schema.students.className,
-          studentSection: schema.students.section,
-          examName: schema.exams.name,
-          examDate: schema.exams.examDate,
-        })
-        .from(schema.registrations)
-        .leftJoin(schema.students, sql`${schema.students.id} = ${schema.registrations.studentId}`)
-        .leftJoin(schema.exams, sql`${schema.exams.id} = ${schema.registrations.examId}`)
-        .where(sql`${schema.registrations.paymentId} = ${input.paymentId}`);
-
-      let payerName = "N/A";
-      if (payment.schoolId) {
-        const school = await db.select().from(schema.schools).where(sql`${schema.schools.id} = ${payment.schoolId}`).limit(1);
-        payerName = school[0]?.name ?? "N/A";
-      } else if (payment.parentId) {
-        const parent = await db.select().from(schema.parents).where(sql`${schema.parents.id} = ${payment.parentId}`).limit(1);
-        payerName = parent[0]?.name ?? "N/A";
-      }
-
-      return {
-        payment,
-        registrations: regs,
-        payerName,
-      };
+  updateProfile: parentQuery
+    .input(
+      z.object({
+        name: z.string().min(2).optional(),
+        email: z.string().email().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      await updateParent(ctx.customSession!.id, input);
+      return { success: true };
     }),
 });

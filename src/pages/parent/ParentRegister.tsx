@@ -18,13 +18,24 @@ export default function ParentRegister() {
     onError: (err) => setError(err.message),
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (form.password !== form.confirmPassword) { setError("Passwords do not match"); return; }
     if (form.password.length < 6) { setError("Password must be at least 6 characters"); return; }
-    const { confirmPassword, ...data } = form;
-    registerMutation.mutate(data);
+    
+    try {
+      const { createUserWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      const synthesizedEmail = `${form.mobile}@parent.olympiad.local`;
+      const userCred = await createUserWithEmailAndPassword(auth, synthesizedEmail, form.password);
+      const idToken = await userCred.user.getIdToken();
+      
+      const { confirmPassword, password, ...data } = form;
+      registerMutation.mutate({ ...data, idToken });
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
+    }
   };
 
   return (

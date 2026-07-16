@@ -12,7 +12,6 @@ import {
   Menu,
   X,
   ChevronRight,
-  GraduationCap,
   Upload,
   Receipt,
   UserCircle,

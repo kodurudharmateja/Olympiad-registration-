@@ -80,10 +80,19 @@ export function useAuth() {
   const isAuthenticated = !!user;
   const role = user?.role ?? null;
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     if (role === "ADMIN") logoutAdmin.mutate();
     else if (role === "SCHOOL") logoutSchool.mutate();
     else if (role === "PARENT") logoutParent.mutate();
+    
+    try {
+      const { signOut } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      await signOut(auth);
+    } catch (e) {
+      console.error("Firebase logout error", e);
+    }
+
     // Clear all auth state by reloading
     setTimeout(() => {
       window.location.href = "/";

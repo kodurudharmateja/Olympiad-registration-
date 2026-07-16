@@ -13,18 +13,18 @@ export const adminRouter = createRouter({
   login: publicQuery
     .input(
       z.object({
-        email: z.string().email(),
-        password: z.string().min(1),
+        idToken: z.string().min(1),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const admin = await findAdminByEmail(input.email);
-      if (!admin) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+      const { verifyFirebaseToken } = await import("../firebase/auth");
+      const decoded = await verifyFirebaseToken(input.idToken);
+      if (!decoded) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
       }
 
-      const valid = compareSync(input.password, admin.passwordHash);
-      if (!valid) {
+      const admin = await findAdminByEmail(decoded.email!);
+      if (!admin) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
 

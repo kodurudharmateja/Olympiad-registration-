@@ -19,14 +19,24 @@ export default function ParentLogin() {
     onError: (err) => setError(err.message),
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!mobile || !password) {
       setError("Please fill in all fields");
       return;
     }
-    loginMutation.mutate({ mobile, password });
+    
+    try {
+      const { signInWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      const synthesizedEmail = `${mobile}@parent.olympiad.local`;
+      const userCred = await signInWithEmailAndPassword(auth, synthesizedEmail, password);
+      const idToken = await userCred.user.getIdToken();
+      loginMutation.mutate({ mobile, idToken });
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    }
   };
 
   return (
