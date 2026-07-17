@@ -1,166 +1,97 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import crypto from "crypto";
+import Razorpay from "razorpay";
 
-import { createRouter, publicQuery, adminQuery, parentQuery } from "../middleware";
+import { createRouter, adminQuery, parentQuery } from "../middleware";
 import {
-  findParentById,
-  findParentByMobile,
-  listParents,
-  createParent,
-  updateParent,
-  getParentCount,
-} from "../queries/parents";
-import { createCustomSession, getCustomCookieName } from "../custom-auth";
-import * as cookie from "cookie";
+  createPayment,
+  findPaymentByOrderId,
+  updatePaymentStatus,
+  listPayments,
+  getPaymentById,
+} from "../queries/payments";
 
-export const parentRouter = createRouter({
-  register: publicQuery
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
+
+export const paymentRouter = createRouter({
+  // Step 1: Parent initiates payment for a registration
+  createOrder: parentQuery
     .input(
       z.object({
-        name: z.string().min(2),
-        mobile: z.string().min(10).max(15),
-        email: z.string().email().optional(),
-        idToken: z.string().min(1),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const { verifyFirebaseToken } = await import("../firebase/auth");
-      const decoded = await verifyFirebaseToken(input.idToken);
-      if (!decoded) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
-      }
-
-      const existing = await findParentByMobile(input.mobile);
-      if (existing) {
-        throw new TRPCError({ code: "CONFLICT", message: "Mobile number already registered" });
-      }
-
-      const passwordHash = ""; // Firebase handles passwords
-      const result = await createParent({
-        name: input.name,
-        mobile: input.mobile,
-        email: input.email ?? null,
-        passwordHash,
-      });
-
-      return { success: true, parentId: Number(result[0].insertId) };
-    }),
-
-  login: publicQuery
-    .input(
-      z.object({
-        idToken: z.string().min(1),
-        mobile: z.string().min(10),
+        registrationId: z.number(),
+        amount: z.number().positive(), // in rupees
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { verifyFirebaseToken } = await import("../firebase/auth");
-      const decoded = await verifyFirebaseToken(input.idToken);
-      if (!decoded) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
-      }
+      const amountInPaise = Math.round(input.amount * 100);
 
-      const parent = await findParentByMobile(input.mobile);
-      if (!parent) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid mobile or password" });
-      }
+      const order = await razorpay.orders.create({
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: `reg_${input.registrationId}_${Date.now()}`,
+      });
 
-      const token = await createCustomSession(parent.id, "PARENT");
-
-      ctx.resHeaders.append(
-        "set-cookie",
-        cookie.serialize(getCustomCookieName(), token, {
-          httpOnly: true,
-          path: "/",
-          sameSite: "lax",
-          maxAge: 30 * 24 * 60 * 60,
-        })
-      );
+      await createPayment({
+        registrationId: input.registrationId,
+        parentId: ctx.customSession!.id,
+        razorpayOrderId: order.id,
+        amount: input.amount,
+        status: "CREATED",
+      });
 
       return {
         success: true,
-        parent: {
-          id: parent.id,
-          name: parent.name,
-          mobile: parent.mobile,
-          email: parent.email,
-        },
+        orderId: order.id,
+        amount: amountInPaise,
+        currency: order.currency,
+        keyId: process.env.RAZORPAY_KEY_ID,
       };
     }),
 
-  me: publicQuery.query(async ({ ctx }) => {
-    if (!ctx.customSession || ctx.customSession.type !== "PARENT") {
-      return null;
-    }
-    const parent = await findParentById(ctx.customSession.id);
-    if (!parent) return null;
-    return {
-      id: parent.id,
-      name: parent.name,
-      mobile: parent.mobile,
-      email: parent.email,
-    };
-  }),
-
-  logout: publicQuery.mutation(async ({ ctx }) => {
-    ctx.resHeaders.append(
-      "set-cookie",
-      cookie.serialize(getCustomCookieName(), "", {
-        httpOnly: true,
-        path: "/",
-        sameSite: "lax",
-        maxAge: 0,
+  // Step 2: Verify signature after Razorpay checkout completes on the frontend
+  verify: parentQuery
+    .input(
+      z.object({
+        razorpay_order_id: z.string(),
+        razorpay_payment_id: z.string(),
+        razorpay_signature: z.string(),
       })
-    );
-    return { success: true };
-  }),
+    )
+    .mutation(async ({ input }) => {
+      const body = `${input.razorpay_order_id}|${input.razorpay_payment_id}`;
+      const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+        .update(body)
+        .digest("hex");
 
-  list: adminQuery.query(async () => {
-    return listParents();
-  }),
+      if (expectedSignature !== input.razorpay_signature) {
+        await updatePaymentStatus(input.razorpay_order_id, "FAILED");
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Payment verification failed" });
+      }
+
+      const payment = await findPaymentByOrderId(input.razorpay_order_id);
+      if (!payment) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Payment record not found" });
+      }
+
+      await updatePaymentStatus(input.razorpay_order_id, "PAID", input.razorpay_payment_id);
+
+      return { success: true };
+    }),
 
   getById: adminQuery
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const parent = await findParentById(input.id);
-      if (!parent) throw new TRPCError({ code: "NOT_FOUND", message: "Parent not found" });
-      return parent;
+      const payment = await getPaymentById(input.id);
+      if (!payment) throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
+      return payment;
     }),
 
-  update: adminQuery
-    .input(
-      z.object({
-        id: z.number(),
-        name: z.string().optional(),
-        mobile: z.string().optional(),
-        email: z.string().optional(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await updateParent(id, data);
-      return { success: true };
-    }),
-
-  count: adminQuery.query(async () => {
-    return getParentCount();
+  list: adminQuery.query(async () => {
+    return listPayments();
   }),
-
-  profile: parentQuery.query(async ({ ctx }) => {
-    const parent = await findParentById(ctx.customSession!.id);
-    if (!parent) throw new TRPCError({ code: "NOT_FOUND", message: "Parent not found" });
-    return parent;
-  }),
-
-  updateProfile: parentQuery
-    .input(
-      z.object({
-        name: z.string().min(2).optional(),
-        email: z.string().email().optional(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      await updateParent(ctx.customSession!.id, input);
-      return { success: true };
-    }),
 });
