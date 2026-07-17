@@ -152,6 +152,75 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Who Inspired Us */}
+      <section className="py-16 px-4 border-t border-[#E8E4E0]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-xl font-semibold text-[#2D2D2D] text-center mb-12">
+            Who Inspired Us
+          </h2>
+
+          <div className="flex flex-col lg:flex-row items-center gap-10">
+            {/* Image */}
+            <div className="flex-shrink-0">
+              <img
+                src="/WalterLewin.jpg" // TODO: confirm actual image path/filename
+                alt="Prof. Walter Lewin"
+                className="w-40 h-40 lg:w-56 lg:h-56 rounded-2xl object-cover border border-[#E8E4E0] bg-[#FAFAF8]"
+              />
+            </div>
+
+            {/* Info */}
+            <div className="text-center lg:text-left">
+              <h3 className="text-xl font-semibold text-[#2D2D2D] mb-1">
+                Prof. Walter Lewin
+              </h3>
+              <p className="text-sm text-[#8B8680] mb-4">Astrophysicist</p>
+              <p className="text-sm text-[#6B6560] leading-relaxed max-w-xl">
+                Walter Hendrik Gustav Lewin (born January 29, 1936) is a Dutch
+                astrophysicist and retired professor of physics at the
+                Massachusetts Institute of Technology. Lewin earned his doctorate
+                in nuclear physics in 1965 at the Delft University of Technology
+                and was a member of MIT's physics faculty for 43 years beginning
+                in 1966 until his retirement in 2009. Lewin's contributions in
+                astrophysics include the first discovery of a rotating neutron
+                star through all-sky balloon surveys and research in X-ray
+                detection in investigations through satellites and observatories.
+                Lewin has received awards for teaching and is known for his
+                lectures on physics and their publication online via YouTube,
+                MIT Open Course Ware and edX.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Founder / Person Section */}
+      <section className="py-16 px-4 bg-white border-y border-[#E8E4E0]">
+        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-10">
+          {/* Image */}
+          <div className="flex-shrink-0">
+            <img
+              src="/HarishChandraVerma.png" // TODO: replace with actual image path
+              alt="Name of the person"
+              className="w-40 h-40 lg:w-56 lg:h-56 rounded-2xl object-cover border border-[#E8E4E0] bg-[#FAFAF8]"
+            />
+          </div>
+
+          {/* Info */}
+          <div className="text-center lg:text-left">
+            <h3 className="text-xl font-semibold text-[#2D2D2D] mb-1">
+              {/* TODO: Name */}
+              Prof. Harish Chandra Verma
+            </h3>
+            <p className="text-sm text-[#8B8680] mb-4">
+              {/* TODO: Designation */}
+              Authors of Physics
+            </p>
+            <p className="text-sm text-[#6B6560] leading-relaxed max-w-xl">Prof. Harish Chandra Verma is one of the most distinguished authors of Physics in India. Often referred to as an 'idol' and the pedagogical 'Guru' for all JEE aspirants, he has written several influential books on Physics and is best known for his two-volume book Concepts of Physics. The book is considered as the Bible of Physics, a prerequisite for students preparing for IIT JEE or other engineering entrance examinations. Currently, he serves as a Professor in the Department of Physics at IIT Kanpur. Besides being a prominent author and researcher, he is an active socialist who has co-founded many social initiatives like Shikhsa Sopan, which literally means "a ladder to education" for the growth and upliftment of underprivileged kids in and around IIT campus
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section id="about" className="py-16 px-4 bg-white border-y border-[#E8E4E0] scroll-mt-20">
         <div className="max-w-6xl mx-auto">

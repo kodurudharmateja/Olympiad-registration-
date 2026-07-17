@@ -112,7 +112,7 @@ export default function RegisterInfo() {
         {/* Login options */}
         <div className="text-center">
           <h3 className="text-lg font-semibold text-[#2D2D2D] mb-6">
-            Continue to Register
+            Registrations start from 15th August-2026
           </h3>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/school/login">
