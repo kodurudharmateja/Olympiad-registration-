@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidDistrictForState, ALL_STATE_NAMES } from "@/lib/india-states-districts";
 import { TRPCError } from "@trpc/server";
 
 import { createRouter, publicQuery, adminQuery, schoolQuery } from "../middleware";
@@ -18,18 +19,65 @@ export const schoolRouter = createRouter({
   register: publicQuery
     .input(
       z.object({
-        name: z.string().min(2),
-        principalName: z.string().min(2),
-        contactPerson: z.string().min(2),
-        mobile: z.string().min(10).max(15),
-        email: z.string().email().optional(),
-        address: z.string().min(5),
-        city: z.string().min(2),
-        district: z.string().min(2),
-        state: z.string().min(2),
-        pinCode: z.string().min(4).max(10),
+        name: z
+          .string()
+          .min(3, "School name must be at least 3 characters")
+          .max(150, "School name must be at most 150 characters")
+          .refine((v) => /[a-zA-Z]/.test(v.trim()), {
+            message: "School name must contain at least one letter",
+          }),
+        principalName: z
+          .string()
+          .min(2, "Principal name must be at least 2 characters")
+          .max(100, "Principal name must be at most 100 characters")
+          .refine((v) => /[a-zA-Z]/.test(v.trim()), {
+            message: "Principal name must contain alphabetic characters",
+          }),
+        contactPerson: z
+          .string()
+          .min(2, "Contact person must be at least 2 characters")
+          .max(100, "Contact person must be at most 100 characters")
+          .refine((v) => /[a-zA-Z]/.test(v.trim()), {
+            message: "Contact person must contain alphabetic characters",
+          }),
+        mobile: z
+          .string()
+          .regex(/^[6-9]\d{9}$/, "Mobile must be a valid 10-digit Indian number starting with 6-9"),
+        email: z
+          .string()
+          .email("Invalid email address")
+          .optional()
+          .or(z.literal("")
+            .transform(() => undefined)),
+        address: z
+          .string()
+          .min(5, "Address must be at least 5 characters")
+          .max(300, "Address must be at most 300 characters")
+          .refine((v) => v.trim().length > 0, { message: "Address cannot be whitespace only" }),
+        city: z
+          .string()
+          .min(2, "City must be at least 2 characters")
+          .max(100, "City must be at most 100 characters")
+          .refine((v) => /[a-zA-Z]/.test(v.trim()), {
+            message: "City must contain alphabetic characters",
+          }),
+        district: z.string().min(2, "District is required"),
+        state: z
+          .string()
+          .refine((v) => ALL_STATE_NAMES.includes(v), {
+            message: "State must be a valid Indian state or union territory",
+          }),
+        pinCode: z
+          .string()
+          .regex(/^[1-9]\d{5}$/, "PIN code must be 6 digits and cannot start with 0"),
         idToken: z.string().min(1),
-      })
+      }).refine(
+        (data) => isValidDistrictForState(data.state, data.district),
+        {
+          message: "District does not belong to the selected state",
+          path: ["district"],
+        }
+      )
     )
     .mutation(async ({ input }) => {
       const { verifyFirebaseToken } = await import("../firebase/auth");
