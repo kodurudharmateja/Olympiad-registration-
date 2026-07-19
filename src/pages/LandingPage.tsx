@@ -13,7 +13,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: "About", to: "#about" },
+    { label: "About", to: "/about" },
     { label: "Syllabus", to: "/syllabus" },
     { label: "Achievements", to: "/achievements" },
     { label: "Brochure", to: "/brochure.pdf", newTab: true },
@@ -39,14 +39,15 @@ export default function LandingPage() {
             {/* Desktop nav */}
             <nav className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.to}
-                  {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="text-sm text-[#C7D2E8] hover:text-white transition-colors"
-                >
-                  {link.label}
-                </a>
+                <Link
+                key={link.label}
+                to={link.to}
+                {...(link.newTab
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                className="text-sm text-[#C7D2E8] hover:text-white transition-colors">
+                {link.label}
+              </Link>
               ))}
               <Link to="/register-now">
                 <Button
@@ -98,15 +99,15 @@ export default function LandingPage() {
 
               <nav className="flex flex-col gap-5">
                 {navLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.label}
-                    href={link.to}
+                    to={link.to}
                     {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-base text-[#2D2D2D] font-medium"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
                 <Link to="/register-now" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full bg-[#D4A843] hover:bg-[#C4982F] text-[#1A1000] font-medium mt-2">
@@ -245,7 +246,11 @@ export default function LandingPage() {
             >
               <h4 className="text-sm font-semibold text-[#122250] mb-2">Syllabus</h4>
               <p className="text-xs text-[#41537A] leading-relaxed">
-                View the full exam-wise syllabus for all Junior Physics Olympiad exams.
+                  Review the complete syllabus with chapter-wise topics designed to build
+                  strong conceptual understanding and problem-solving skills.
+                  Get a detailed overview of every subject area covered in the Junior Physics Olympiad exams, 
+                  ensuring students are well-prepared for each level of the competition.
+                  View the full exam-wise syllabus for all Junior Physics Olympiad exams.
               </p>
               <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
                 View full syllabus →
@@ -253,7 +258,10 @@ export default function LandingPage() {
             </Link>
 
             {/* About card */}
-            <div className="flex-1 p-6 rounded-xl bg-white border border-[#C9DDF5]">
+            <Link
+              to="/about"
+              className="flex-1 p-6 rounded-xl bg-white border border-[#C9DDF5] hover:border-[#7FA8DE] transition-colors"
+            >
               <h4 className="text-sm font-semibold text-[#122250] mb-4">About</h4>
               <p className="text-xs text-[#41537A] leading-relaxed">
                 prestigious national-level examination designed to identify, encourage,
@@ -265,7 +273,7 @@ export default function LandingPage() {
               <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
                 View About →
               </span>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
