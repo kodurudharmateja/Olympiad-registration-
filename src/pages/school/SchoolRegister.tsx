@@ -377,7 +377,7 @@ export default function SchoolRegister() {
                   <FieldError field="principalName" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[#2D2D2D]">Contact Person *</Label>
+                  <Label className="text-[#2D2D2D]">Contact Person * ( Physics HOD )</Label>
                   <Input
                     id="contact-person"
                     name="contactPerson"

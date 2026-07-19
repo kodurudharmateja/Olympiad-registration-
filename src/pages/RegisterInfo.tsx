@@ -6,6 +6,7 @@ import {
   Users,
   ArrowRight,
   ArrowLeft,
+  IndianRupee,
 } from "lucide-react";
 
 export default function RegisterInfo() {
@@ -99,12 +100,12 @@ export default function RegisterInfo() {
 
         {/* Fee */}
         <div className="mb-12 rounded-xl bg-white border border-[#E8E4E0] p-6 flex items-center gap-4 max-w-md mx-auto">
-          {/* <div className="w-12 h-12 rounded-full bg-[#F0EDE8] flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-full bg-[#F0EDE8] flex items-center justify-center flex-shrink-0">
             <IndianRupee className="w-6 h-6 text-[#2D2D2D]" />
-          </div> */}
+          </div> 
           <div>
             <p className="text-xs text-[#6B6560] mb-1">Registration Fee</p>
-            <p className="text-xl font-bold text-[#2D2D2D]">₹250 per student</p>
+            <p className="text-xl font-bold text-[#2D2D2D]">250 per student</p>
           </div>
         </div>
 
