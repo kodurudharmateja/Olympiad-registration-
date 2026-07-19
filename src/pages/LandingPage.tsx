@@ -247,7 +247,7 @@ export default function LandingPage() {
               <p className="text-xs text-[#41537A] leading-relaxed">
                 View the full exam-wise syllabus for all Junior Physics Olympiad exams.
               </p>
-              <span className="inline-block mt-3 text-xs font-medium text-[#2E5AA8]">
+              <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
                 View full syllabus →
               </span>
             </Link>
@@ -261,6 +261,10 @@ export default function LandingPage() {
                 with an opportunity to strengthen their conceptual understanding, logical
                 reasoning, scientific thinking, and problem-solving abilities.
               </p>
+              
+              <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
+                View About →
+              </span>
             </div>
           </div>
         </div>

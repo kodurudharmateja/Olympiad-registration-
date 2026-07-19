@@ -331,7 +331,7 @@ export default function SchoolRegister() {
               className="w-8 h-8 object-contain"
             />
           </div>
-          <h1 className="text-xl font-semibold text-[#2D2D2D]">Register Your School</h1>
+          <h1 className="text-xl font-semibold text-[#D4A843]">Register Your School</h1>
           <p className="text-sm text-[#6B6560]">Create a school account for bulk registration</p>
         </div>
 

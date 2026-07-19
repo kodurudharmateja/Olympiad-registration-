@@ -105,7 +105,7 @@ export default function SchoolLogin() {
             <div className="mt-4 pt-4 border-t border-[#E8E4E0] text-center">
               <p className="text-xs text-[#9B9590]">
                 Don't have an account?{" "}
-                <Link to="/school/register" className="text-[#8B8680] hover:text-[#2D2D2D] font-medium">
+                <Link to="/school/register" className="text-[#D4A843] hover:text-[#2D2D2D] font-medium">
                   Register your school
                 </Link>
               </p>
