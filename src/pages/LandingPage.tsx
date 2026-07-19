@@ -12,12 +12,17 @@ import {
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Internal app routes (handled by React Router)
   const navLinks = [
     { label: "About", to: "/about" },
     { label: "Syllabus", to: "/syllabus" },
     { label: "Achievements", to: "/achievements" },
-    { label: "Brochure", to: "/brochure.pdf", newTab: true },
   ];
+
+  // Static file in /public — must use a plain <a> tag, NOT React Router's <Link>,
+  // because <Link> only knows how to navigate to routes defined in your router,
+  // not to raw files sitting in the public folder. This was why it wasn't opening.
+  const brochureHref = "/brochure.pdf";
 
   return (
     <div className="min-h-screen bg-[#F2F7FD]">
@@ -32,7 +37,7 @@ export default function LandingPage() {
         {/* Header */}
         <header className="h-16 flex items-center px-4 lg:px-8 relative z-50">
           <div className="flex items-center gap-3 max-w-7xl mx-auto w-full">
-            <img src="/logo.png" alt="Junior Physics Olympiad" className="w-7 h-7 object-contain" />
+            <img src="/logo.png" alt="Junior Physics Olympiad" className="w-7 h-7 object-cover rounded-full" />
             <h1 className="text-lg font-semibold text-white">Junior Physics Olympiad</h1>
             <div className="flex-1" />
 
@@ -40,15 +45,21 @@ export default function LandingPage() {
             <nav className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => (
                 <Link
-                key={link.label}
-                to={link.to}
-                {...(link.newTab
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                className="text-sm text-[#C7D2E8] hover:text-white transition-colors">
-                {link.label}
-              </Link>
+                  key={link.label}
+                  to={link.to}
+                  className="text-sm text-[#C7D2E8] hover:text-white transition-colors"
+                >
+                  {link.label}
+                </Link>
               ))}
+              <a
+                href={brochureHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[#C7D2E8] hover:text-white transition-colors"
+              >
+                Brochure
+              </a>
               <Link to="/register-now">
                 <Button
                   size="sm"
@@ -97,18 +108,29 @@ export default function LandingPage() {
                 </button>
               </div>
 
-              <nav className="flex flex-col gap-5">
+              <nav className="flex flex-col gap-3">
                 {navLinks.map((link) => (
                   <Link
                     key={link.label}
                     to={link.to}
-                    {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-base text-[#2D2D2D] font-medium"
+                    className="w-full text-center rounded-lg bg-[#2E5AA8] hover:bg-[#254A8C] text-white text-base font-medium py-3 transition-colors"
                   >
                     {link.label}
                   </Link>
                 ))}
+
+                {/* Static PDF: plain <a>, not <Link> */}
+                <a
+                  href={brochureHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center rounded-lg bg-[#2E5AA8] hover:bg-[#254A8C] text-white text-base font-medium py-3 transition-colors"
+                >
+                  Brochure
+                </a>
+
                 <Link to="/register-now" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full bg-[#D4A843] hover:bg-[#C4982F] text-[#1A1000] font-medium mt-2">
                     Register Now
@@ -117,7 +139,7 @@ export default function LandingPage() {
                 <Link
                   to="/admin/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base text-[#6B6560] mt-2"
+                  className="text-base text-[#6B6560] mt-2 text-center"
                 >
                   Admin
                 </Link>
@@ -132,12 +154,8 @@ export default function LandingPage() {
             <img
               src="/logo.png"
               alt="Junior Physics Olympiad"
-              className="w-28 h-28 lg:w-36 lg:h-36 object-contain mx-auto mb-6"
+              className="w-28 h-28 lg:w-36 lg:h-36 object-cover rounded-full mx-auto mb-6 border-4 border-white/20"
             />
-            {/* <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F0EDE8] text-[#6B6560] text-xs font-medium mb-6">
-              <Award className="w-3.5 h-3.5" />
-              Olympiad Registration 2026 Now Open
-            </div> */}
             <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
               Junior Physics Olympiad
               <br />
@@ -173,7 +191,7 @@ export default function LandingPage() {
             {/* Image */}
             <div className="flex-shrink-0">
               <img
-                src="/WalterLewin.jpg" // TODO: confirm actual image path/filename
+                src="/WalterLewin.jpg"
                 alt="Prof. Walter Lewin"
                 className="w-40 h-40 lg:w-56 lg:h-56 rounded-2xl object-cover border border-[#C9DDF5] bg-white"
               />
@@ -203,14 +221,15 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
       {/* Founder / Person Section */}
       <section className="py-16 px-4 bg-[#DCE9FA] border-y border-[#C9DDF5]">
         <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-10">
           {/* Image */}
           <div className="flex-shrink-0">
             <img
-              src="/HarishChandraVerma.png" // TODO: replace with actual image path
-              alt="Name of the person"
+              src="/HarishChandraVerma.png"
+              alt="Prof. Harish Chandra Verma"
               className="w-40 h-40 lg:w-56 lg:h-56 rounded-2xl object-cover border border-[#C9DDF5] bg-white"
             />
           </div>
@@ -218,46 +237,53 @@ export default function LandingPage() {
           {/* Info */}
           <div className="text-center lg:text-left">
             <h3 className="text-xl font-semibold text-[#122250] mb-1">
-              {/* TODO: Name */}
               Prof. Harish Chandra Verma
             </h3>
             <p className="text-sm text-[#5B79A8] mb-4">
-              {/* TODO: Designation */}
               Authors of Physics
             </p>
-            <p className="text-sm text-[#41537A] leading-relaxed max-w-xl">Prof. Harish Chandra Verma is one of the most distinguished authors of Physics in India. Often referred to as an 'idol' and the pedagogical 'Guru' for all JEE aspirants, he has written several influential books on Physics and is best known for his two-volume book Concepts of Physics. The book is considered as the Bible of Physics, a prerequisite for students preparing for IIT JEE or other engineering entrance examinations. Currently, he serves as a Professor in the Department of Physics at IIT Kanpur. Besides being a prominent author and researcher, he is an active socialist who has co-founded many social initiatives like Shikhsa Sopan, which literally means "a ladder to education" for the growth and upliftment of underprivileged kids in and around IIT campus
+            <p className="text-sm text-[#41537A] leading-relaxed max-w-xl">
+              Prof. Harish Chandra Verma is one of the most distinguished authors of Physics in India.
+              Often referred to as an 'idol' and the pedagogical 'Guru' for all JEE aspirants, he has
+              written several influential books on Physics and is best known for his two-volume book
+              Concepts of Physics. The book is considered as the Bible of Physics, a prerequisite for
+              students preparing for IIT JEE or other engineering entrance examinations. Currently, he
+              serves as a Professor in the Department of Physics at IIT Kanpur. Besides being a prominent
+              author and researcher, he is an active socialist who has co-founded many social initiatives
+              like Shikhsa Sopan, which literally means "a ladder to education" for the growth and
+              upliftment of underprivileged kids in and around IIT campus.
             </p>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section id="about" className="py-16 px-4 bg-[#EDF4FC] border-y border-[#D8E6FA] scroll-mt-20">
+      {/* <section id="about" className="py-16 px-4 bg-[#EDF4FC] border-y border-[#D8E6FA] scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           <h3 className="text-xl font-semibold text-[#122250] text-center mb-12">
             Exam Syllabus
           </h3>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Syllabus card */}
+            {/* Syllabus card 
             <Link
               to="/syllabus"
               className="flex-1 p-6 rounded-xl bg-white border border-[#C9DDF5] hover:border-[#7FA8DE] transition-colors"
             >
               <h4 className="text-sm font-semibold text-[#122250] mb-2">Syllabus</h4>
               <p className="text-xs text-[#41537A] leading-relaxed">
-                  Review the complete syllabus with chapter-wise topics designed to build
-                  strong conceptual understanding and problem-solving skills.
-                  Get a detailed overview of every subject area covered in the Junior Physics Olympiad exams, 
-                  ensuring students are well-prepared for each level of the competition.
-                  View the full exam-wise syllabus for all Junior Physics Olympiad exams.
+                Review the complete syllabus with chapter-wise topics designed to build
+                strong conceptual understanding and problem-solving skills.
+                Get a detailed overview of every subject area covered in the Junior Physics Olympiad exams,
+                ensuring students are well-prepared for each level of the competition.
+                View the full exam-wise syllabus for all Junior Physics Olympiad exams.
               </p>
               <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
                 View full syllabus →
               </span>
             </Link>
 
-            {/* About card */}
+            {/* About card 
             <Link
               to="/about"
               className="flex-1 p-6 rounded-xl bg-white border border-[#C9DDF5] hover:border-[#7FA8DE] transition-colors"
@@ -269,14 +295,14 @@ export default function LandingPage() {
                 with an opportunity to strengthen their conceptual understanding, logical
                 reasoning, scientific thinking, and problem-solving abilities.
               </p>
-              
+
               <span className="inline-block mt-3 text-sm font-medium text-[#2E5AA8]">
                 View About →
               </span>
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* How it works */}
       <section className="py-16 px-4 bg-[#F2F7FD]">
