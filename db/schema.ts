@@ -29,6 +29,7 @@ export type InsertUser = typeof users.$inferInsert;
 // ─── Admin (email/password login) ───
 export const admins = mysqlTable("admins", {
   id: serial("id").primaryKey(),
+  firebaseUid: varchar("firebaseUid", { length: 255 }).unique(),
   email: varchar("email", { length: 320 }).notNull().unique(),
   passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }).default("Administrator"),

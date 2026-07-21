@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { compareSync, hashSync } from "bcrypt-ts";
 import { createRouter, publicQuery, adminQuery } from "../middleware";
-import { findAdminByEmail, findAdminById } from "../queries/admins";
+import { findAdminByFirebaseUid, findAdminById } from "../queries/admins";
 import { createCustomSession, getCustomCookieName } from "../custom-auth";
 import { getDb } from "../queries/connection";
+
 import * as schema from "@db/schema";
 import { sql } from "drizzle-orm";
 import * as cookie from "cookie";
+import { getSerializeCookieOptions } from "../lib/cookies";
 
 export const adminRouter = createRouter({
   login: publicQuery
@@ -23,9 +24,13 @@ export const adminRouter = createRouter({
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Firebase token" });
       }
 
-      const admin = await findAdminByEmail(decoded.email!);
+      // Check for Admin mapped to this Firebase UID
+      const admin = await findAdminByFirebaseUid(decoded.uid);
       if (!admin) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+        throw new TRPCError({ 
+          code: "UNAUTHORIZED", 
+          message: "No administrator account linked to this Firebase identity." 
+        });
       }
 
       const token = await createCustomSession(admin.id, "ADMIN");
@@ -33,9 +38,7 @@ export const adminRouter = createRouter({
       ctx.resHeaders.append(
         "set-cookie",
         cookie.serialize(getCustomCookieName(), token, {
-          httpOnly: true,
-          path: "/",
-          sameSite: "lax",
+          ...getSerializeCookieOptions(ctx.req.headers),
           maxAge: 30 * 24 * 60 * 60,
         })
       );
@@ -56,9 +59,7 @@ export const adminRouter = createRouter({
     ctx.resHeaders.append(
       "set-cookie",
       cookie.serialize(getCustomCookieName(), "", {
-        httpOnly: true,
-        path: "/",
-        sameSite: "lax",
+        ...getSerializeCookieOptions(ctx.req.headers),
         maxAge: 0,
       })
     );
@@ -137,29 +138,4 @@ export const adminRouter = createRouter({
 
     return breakdown;
   }),
-
-  changePassword: adminQuery
-    .input(
-      z.object({
-        currentPassword: z.string().min(1),
-        newPassword: z.string().min(6),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const adminId = ctx.customSession?.id ?? ctx.user?.id;
-      if (!adminId) throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
-
-      const admin = await findAdminById(adminId);
-      if (!admin) throw new TRPCError({ code: "NOT_FOUND", message: "Admin not found" });
-
-      const valid = compareSync(input.currentPassword, admin.passwordHash);
-      if (!valid) throw new TRPCError({ code: "UNAUTHORIZED", message: "Current password is incorrect" });
-
-      await getDb()
-        .update(schema.admins)
-        .set({ passwordHash: hashSync(input.newPassword, 10) })
-        .where(sql`${schema.admins.id} = ${adminId}`);
-
-      return { success: true };
-    }),
 });

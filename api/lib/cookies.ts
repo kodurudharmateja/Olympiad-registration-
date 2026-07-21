@@ -15,3 +15,14 @@ export function getSessionCookieOptions(headers: Headers): CookieOptions {
     secure: !localhost,
   };
 }
+
+export function getSerializeCookieOptions(headers: Headers) {
+  const localhost = isLocalhost(headers);
+
+  return {
+    httpOnly: true,
+    path: "/",
+    sameSite: (localhost ? "lax" : "none") as "lax" | "none",
+    secure: !localhost,
+  };
+}

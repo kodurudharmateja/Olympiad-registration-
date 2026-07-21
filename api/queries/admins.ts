@@ -19,3 +19,13 @@ export async function findAdminById(id: number) {
     .limit(1);
   return rows.at(0);
 }
+
+export async function findAdminByFirebaseUid(firebaseUid: string) {
+  if (!firebaseUid) return undefined;
+  const rows = await getDb()
+    .select()
+    .from(schema.admins)
+    .where(eq(schema.admins.firebaseUid, firebaseUid))
+    .limit(1);
+  return rows.at(0);
+}

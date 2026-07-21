@@ -14,6 +14,7 @@ import {
 import { createCustomSession, getCustomCookieName } from "../custom-auth";
 
 import * as cookie from "cookie";
+import { getSerializeCookieOptions } from "../lib/cookies";
 
 export const schoolRouter = createRouter({
   register: publicQuery
@@ -129,9 +130,7 @@ export const schoolRouter = createRouter({
       ctx.resHeaders.append(
         "set-cookie",
         cookie.serialize(getCustomCookieName(), token, {
-          httpOnly: true,
-          path: "/",
-          sameSite: "lax",
+          ...getSerializeCookieOptions(ctx.req.headers),
           maxAge: 30 * 24 * 60 * 60,
         })
       );
@@ -180,9 +179,7 @@ export const schoolRouter = createRouter({
     ctx.resHeaders.append(
       "set-cookie",
       cookie.serialize(getCustomCookieName(), "", {
-        httpOnly: true,
-        path: "/",
-        sameSite: "lax",
+        ...getSerializeCookieOptions(ctx.req.headers),
         maxAge: 0,
       })
     );
