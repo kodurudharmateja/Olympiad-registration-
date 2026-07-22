@@ -2,11 +2,12 @@ import { relations } from "drizzle-orm";
 import {
   schools,
   parents,
+  payments,
+  results,
   students,
   exams,
   registrations,
-  payments,
-  results,
+
 } from "./schema";
 
 export const schoolsRelations = relations(schools, ({ many }) => ({
