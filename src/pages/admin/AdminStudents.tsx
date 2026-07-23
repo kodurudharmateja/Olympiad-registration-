@@ -1,17 +1,37 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, GraduationCap, UserCircle, School } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, GraduationCap, UserCircle, School, X } from "lucide-react";
 
 export default function AdminStudents() {
   const [search, setSearch] = useState("");
   const [className, setClassName] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: students } = trpc.student.list.useQuery(
-    search || className ? { search: search || undefined, className: className || undefined } : undefined
+  const schoolIdParam = searchParams.get("schoolId");
+  const schoolId = schoolIdParam ? Number(schoolIdParam) : undefined;
+
+  const { data: students } = trpc.student.list.useQuery({
+    search: search || undefined,
+    className: className || undefined,
+    schoolId,
+  });
+
+  // Look up the school name for the filter badge (cheap: reuses cached school list if already fetched)
+  const { data: filteredSchool } = trpc.school.getById.useQuery(
+    { id: schoolId! },
+    { enabled: !!schoolId }
   );
+
+  const clearSchoolFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("schoolId");
+    setSearchParams(next);
+  };
 
   return (
     <div className="space-y-6">
@@ -19,6 +39,27 @@ export default function AdminStudents() {
         <h2 className="text-xl font-semibold text-[#2D2D2D]">Students</h2>
         <p className="text-sm text-[#6B6560]">Full student database</p>
       </div>
+
+      {schoolId && (
+        <div className="flex items-center gap-2 bg-[#F0EDE8] border border-[#D9D4CC] rounded-md px-3 py-2 w-fit text-sm text-[#2D2D2D]">
+          <School className="w-4 h-4 text-[#8B8680]" />
+          <span>
+            Filtered by school:{" "}
+            <span className="font-medium">
+              {filteredSchool?.name ?? `#${schoolId}`}
+            </span>
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 hover:bg-[#E8E4E0]"
+            onClick={clearSchoolFilter}
+            title="Clear filter"
+          >
+            <X className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">

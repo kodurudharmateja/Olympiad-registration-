@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Search, School, MapPin, Phone, Mail, CheckCircle, XCircle } from "lucid
 export default function AdminSchools() {
   const [search, setSearch] = useState("");
   const utils = trpc.useUtils();
+  const navigate = useNavigate();
 
   const { data: schools } = trpc.school.list.useQuery(
     search ? { search } : undefined
@@ -55,13 +57,20 @@ export default function AdminSchools() {
                 {schools?.map((school) => (
                   <tr key={school.id} className="border-b border-[#F0EDE8] hover:bg-[#FAFAF8]">
                     <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/admin/students?schoolId=${school.id}`)}
+                        className="flex items-center gap-2 text-left group"
+                        title="View students from this school"
+                      >
                         <School className="w-4 h-4 text-[#8B8680]" />
                         <div>
-                          <p className="text-[#2D2D2D] font-medium">{school.name}</p>
+                          <p className="text-[#2D2D2D] font-medium group-hover:underline group-hover:text-[#2D2D2D]/80">
+                            {school.name}
+                          </p>
                           <p className="text-xs text-[#9B9590]">Principal: {school.principalName}</p>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td className="py-3 px-4">
                       <div className="space-y-1">
